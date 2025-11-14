@@ -13,7 +13,6 @@ class Face {
 	private string? fileName = null;
 	private Point[]? eyes = null;
 	private Point? delta = null;
-	//private Bitmap? faceBitmap = null;
 	private Bitmap? faceOutput = null;
 
 	public Face() {}
@@ -30,56 +29,47 @@ class Face {
 		}
 	}
 
+
+	/*
+			#############
+			Get Functions
+			#############
+	*/
+
+	/// <summary>
+	/// Returns the Point values of both eyes in the given bitmap
+	/// </summary>
+	/// <returns>[Point leftEye, Point rightEye]; <c>null</c> if the variable is not initilized</returns>
+	public Point[]? GetEyeCoords() {
+		return eyes;
+	}
+
+	public Bitmap? GetFaceOutput() {
+		return faceOutput;
+	}
+
+	public string? GetFilepath() {
+		return filePath;
+	}
+
+	public string? GetFilename() {
+		return fileName;
+	}
+
+	public Point? GetDelta() {
+		return delta;
+	}
+
 	public void SetFilepath(string path) {
 		filePath = path;
 		fileName = Path.GetFileName(path);
 		faceOutput = new Bitmap(filePath);
 	}
-
-	public Point[]? GetEyeCoords() {
-		if (eyes == null) {
-			Error("eyes are NULL; run function CalcEyeCoords before retreiving");
-			return null;
-		}
-		return eyes;
-	}
-	/*
-	public Bitmap GetFaceBitmap() {
-		return faceBitmap;
-	}
-	*/
-	public Bitmap GetFaceOutput() {
-		return faceOutput;
-	}
-
-	/*
-	public void CalcEyeCoords() {
-		
-		if (filePath == null) {
-			Error($"Variable 'filePath' is NULL; Cannot process face in function 'GetEyeCoords'");
-			return;
-		}
-
-		using var faceDetector = new FaceDetector();
-		using var faceLandmarkExtractor = new Face68LandmarksExtractor();
-
-		var face = faceDetector.Forward(faceOutput)[0];
-		var box = face.Box;
-		using var cropped = BitmapTransform.Crop(faceOutput, box);
-		var points = faceLandmarkExtractor.Forward(cropped);
-		var leftEye = GetIris(points.LeftEye, box);
-		var rightEye = GetIris(points.RightEye, box);
-
-		eyes = [leftEye, rightEye];
-	}
-	*/
+	
 
 	public bool CalcEyeCoords(FaceDetector fd, Face68LandmarksExtractor landmarks) {
 		
-		if (faceOutput == null) {
-			Error("faceOutput is null");
-			return false;
-		}
+		if (faceOutput == null) throw new NullReferenceException("faceOutput is null");
 
 		using var small = ResizeForDetection(faceOutput, 512, out double scale);
 		var faces = fd.Forward(small);
@@ -107,16 +97,10 @@ class Face {
 		return true;
 	}
 
-	public double? AlignEyes() {
+	public double AlignEyes() {
 		
-		if (eyes == null) {
-			Error("eyes are null; cannot continue");
-			return null;
-		}
-		if (faceOutput == null) {
-			Error("faceOutput is null; cannot continue");
-			return null;
-		}
+		if (eyes == null) throw new NullReferenceException("eyes are null");
+		if (faceOutput == null) throw new NullReferenceException("faceOutput is null");
 
 		delta = new Point(eyes![1].X - eyes![0].X, eyes![1].Y - eyes![0].Y);
 
@@ -144,16 +128,10 @@ class Face {
 
 	}
 
-	public double? ResizeFace(int newDistance) {
+	public double ResizeFace(int newDistance) {
 		
-		if (faceOutput == null) {
-			Error("faceBitmap variable is null");
-			return null;
-		}
-		if (delta == null) {
-			Error("Face Delta point variable is null");
-			return null;
-		}
+		if (faceOutput == null) throw new NullReferenceException("faceOutput is null");
+		if (delta == null) throw new NullReferenceException("Face Delta is null");
 		
 		double dist2 = Math.Sqrt((delta!.Value.X * delta!.Value.X) + (delta!.Value.Y * delta!.Value.Y));
 		double ratio = (double)newDistance / dist2;
@@ -174,10 +152,8 @@ class Face {
 
 	public void TransformEyes(double angleDegrees, double scale) {
 		
-		if (eyes == null || faceOutput == null) {
-			Error("Cannot transform eyes; null data");
-			return;
-		}
+		if (faceOutput == null) throw new NullReferenceException("faceOutput is null");
+		if (eyes == null) throw new NullReferenceException("eyes are null");
 
 		double angle = angleDegrees * Math.PI / 180.0;
 		double cosA = Math.Cos(angle);
@@ -221,10 +197,8 @@ class Face {
 	}
 
 	public void DrawEyeLine() {
-		if (eyes == null) {
-			Error("Face eyes variable is null");
-			return;
-		}
+		if (faceOutput == null) throw new NullReferenceException("faceOutput is null");
+		if (eyes == null) throw new NullReferenceException("eyes are null");
 		
 		using (Graphics g = Graphics.FromImage(faceOutput)) {
 			using (Pen pen = new Pen(Color.Red, 8)) {
@@ -235,10 +209,8 @@ class Face {
 
 	public void StandardizeBitmapSize(int w, int h, Point? eyePos = null) {
 
-		if (faceOutput == null) {
-			Error("faceOutput is null; please run alignEyes() and resizeFace() before standardizing bitmap size");
-			return;
-		}
+		if (faceOutput == null) throw new NullReferenceException("faceOutput is null");
+		if (eyes == null) throw new NullReferenceException("eyes are null");
 		
 		Bitmap background = new Bitmap(w, h);
 
@@ -268,11 +240,6 @@ class Face {
 		CalcEyeCoords(fd, landmarks);
 		var angle = AlignEyes();
 		var ratio = ResizeFace(newDistance);
-
-		if (ratio == null || angle == null) {
-			Error("Could not process face");
-			return;
-		}
 		
 		TransformEyes((double)angle, (double)ratio);
 		StandardizeBitmapSize(bgWidth, bgHeight, eyePos);
