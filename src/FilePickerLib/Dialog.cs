@@ -3,6 +3,11 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
+
+#if WINDOWS
+using System.Windows.Forms;
+#endif
+
 namespace FilePicker;
 
 public class Dialog
@@ -24,7 +29,8 @@ public class Dialog
             CheckFileExists = true,
             CheckPathExists = true
         };
-        return dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK ? dialog.FileName : null;
+
+	return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : null;
     }
 # else
     private static string? PickFileWindows(string title) => null;

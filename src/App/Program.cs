@@ -11,11 +11,23 @@ class Program {
     private static string title = "  ______            _ _         _ _             \n |  ____|          ( | )  /\\   | (_)            \n | |__ __ _  ___ ___V V  /  \\  | |_  __ _ _ __  \n |  __/ _` |/ __/ _ \\   / /\\ \\ | | |/ _` | '_ \\ \n | | | (_| | (_|  __/  / ____ \\| | | (_| | | | |\n |_|  \\__,_|\\___\\___| /_/    \\_\\_|_|\\__, |_| |_|\n                                     __/ |      \n                                    |___/       ";
     private List<string> buffer = new List<string>();
 
-    static void Main() {
+    [STAThread]
+    static async Task Main() {
 
-        Start();
+	Console.WriteLine($"Framework loaded: {typeof(Dialog).Assembly.FullName}");
+	Console.WriteLine($"WINDOWS defined: " +
+#if WINDOWS
+	"YES"
+#else
+	"NO" 
+#endif
+);
+
+        var path = Dialog.PickFileAsync("Select a file");
+	if (path != null) Console.WriteLine("Selected file: " + path);
+	else Console.WriteLine("Path is null");
     }
-    
+
     static async void Start() {
 
         Console.Clear();
