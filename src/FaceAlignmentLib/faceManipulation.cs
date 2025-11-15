@@ -5,9 +5,9 @@ using System.Drawing.Drawing2D;
 using FaceONNX;
 using UMapx.Imaging;
 
-namespace FaceManipulator;
+namespace FaceAlignment;
 
-class Face {
+public class Face {
 	
 	private string? filePath = null;
 	private string? fileName = null;
@@ -25,9 +25,7 @@ class Face {
 			fileName = Path.GetFileName(path);
 			faceOutput = new Bitmap(filePath);
 		}
-		else {
-			Error($"File path '{path}' is invalid");
-		}
+		else throw new FileNotFoundException($"File path '{path}' is invalid");
 	}
 
 
@@ -130,7 +128,7 @@ class Face {
 		var faces = fd.Forward(small); // Get face count
 
         // Catch if there is an invalid number of faces detected
-        if (faces.Length == 0 throw new InvalidOperationException($"No faces detected in {filePath}"); // Return an error if no faces are found
+        if (faces.Length == 0) throw new InvalidOperationException($"No faces detected in {filePath}"); // Return an error if no faces are found
         else if (faces.Length > 1) {
             // Skip and save the filepaths for images  with more than one face so they can be resovled later
             skipped.Add(filePath);

@@ -1,4 +1,5 @@
 using FaceAlignment;
+using FilePicker;
 using System;
 using System.IO;
 using System.Drawing;
@@ -7,12 +8,21 @@ using FaceONNX;
 
 class Program {
 
+    private static string title = "  ______            _ _         _ _             \n |  ____|          ( | )  /\\   | (_)            \n | |__ __ _  ___ ___V V  /  \\  | |_  __ _ _ __  \n |  __/ _` |/ __/ _ \\   / /\\ \\ | | |/ _` | '_ \\ \n | | | (_| | (_|  __/  / ____ \\| | | (_| | | | |\n |_|  \\__,_|\\___\\___| /_/    \\_\\_|_|\\__, |_| |_|\n                                     __/ |      \n                                    |___/       ";
     private List<string> buffer = new List<string>();
 
     static void Main() {
-        
-        Print("this /ris /ga /btest/w!"); 
-        //Dialogue();
+
+        Start();
+    }
+    
+    static async void Start() {
+
+        Console.Clear();
+        Console.WriteLine(title);
+
+        string? path = await Dialog.PickFileAsync("Select a file");
+        Console.WriteLine("Selected file: " + path);
     }
 
     private static void Diaglogue() {
