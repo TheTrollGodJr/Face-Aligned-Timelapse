@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="FaceONNX" Version="4.1.1.2" />
+    <ProjectReference Include="../FaceAlignmentLib/FaceAlignment.csproj" />
   </ItemGroup>
 
 </Project>
