@@ -1,0 +1,31 @@
+
+Intro screen
+
+Select file/dir
+is file/dir Correct? (y/n)
+
+[List dir and # of files in it OR single file]
+
+Output method
+(frames) (video)
+
+IF VIDEO: 
+    input fps
+    video file name
+    video format (mp4, avi, mov, etc.
+IF FRAMES: 
+    inform the user that all frames will be saved indexed from 0-n
+    Prompt for frame format (png, jpg, webp)
+
+Output Dir
+Is output dir correct? (y/n)
+
+IF OUTPUT VIDEO EXISTS: ask if you want to override
+
+output resolution (default 3000x5000)
+
+eye delta value (distance between eyes in px; default 700)
+
+Enable verbose logging? (y/n)
+
+Proceed? (y/n)
